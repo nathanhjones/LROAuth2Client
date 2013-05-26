@@ -32,6 +32,7 @@
 @property (nonatomic, copy) NSURL *cancelURL;
 @property (nonatomic, copy) NSURL *userURL;
 @property (nonatomic, copy) NSURL *tokenURL;
+@property (nonatomic, copy) NSURL *approvalStepURL; // used to present overlay hiding ugly oauth forms
 @property (nonatomic, copy) NSArray *scope; // used to request auth to particular levels of scope
 @property (nonatomic, copy) NSString *responseType; // defaults to 'code'
 @property (nonatomic, readonly) LROAuth2AccessToken *accessToken;
