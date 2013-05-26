@@ -11,9 +11,8 @@
 
 @implementation NSURL (QueryInspector)
 
-- (NSDictionary *)queryDictionary;
-{
-  return [NSDictionary dictionaryWithFormEncodedString:self.query];
+- (NSDictionary *)queryDictionary; {
+    return [NSDictionary dictionaryWithFormEncodedString:self.query];
 }
 
 @end
