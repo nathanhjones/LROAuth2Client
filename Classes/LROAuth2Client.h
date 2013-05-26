@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "LROAuth2ClientDelegate.h"
-
-@class LROAuth2AccessToken;
+#import "LROAuth2AccessToken.h"
 
 @interface LROAuth2Client : NSObject {
   NSString *clientID;
