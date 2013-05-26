@@ -32,6 +32,8 @@
 @property (nonatomic, copy) NSURL *cancelURL;
 @property (nonatomic, copy) NSURL *userURL;
 @property (nonatomic, copy) NSURL *tokenURL;
+@property (nonatomic, copy) NSArray *scope; // used to request auth to particular levels of scope
+@property (nonatomic, copy) NSString *responseType; // defaults to 'code'
 @property (nonatomic, readonly) LROAuth2AccessToken *accessToken;
 @property (nonatomic, unsafe_unretained) id<LROAuth2ClientDelegate> delegate;
 @property (nonatomic, assign) BOOL debug;

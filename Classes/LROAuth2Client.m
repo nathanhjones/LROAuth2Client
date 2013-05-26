@@ -39,12 +39,12 @@
     requests = [[NSMutableArray alloc] init];
     debug = NO;
     _networkQueue = [[NSOperationQueue alloc] init];
+      self.responseType = @"code";  // set the default response type
   }
   return self;
 }
 
-- (void)dealloc;
-{
+- (void)dealloc {
   [_networkQueue cancelAllOperations];
 }
 
@@ -57,6 +57,26 @@
   [params setValue:@"web_server" forKey:@"type"];
   [params setValue:clientID forKey:@"client_id"];
   [params setValue:[redirectURL absoluteString] forKey:@"redirect_uri"];
+    [params setValue:self.responseType forKey:@"response_type"];
+    
+    // add scope parameter if needed
+    if (self.scope.count > 0) {
+        NSMutableString *scopeString = [[NSMutableString alloc] init];
+        for (int i=0; i<self.scope.count; i++) {
+            
+            // append delimeter - just not to the first item
+            if (i > 0) {
+                [scopeString appendString:@" "];
+            }
+            
+            id scopeItem = [self.scope objectAtIndex:i];
+            if ([scopeItem isKindOfClass:[NSString class]]) {
+                [scopeString appendString:(NSString*)scopeItem];
+            }
+        }
+        
+        [params setValue:scopeString forKey:@"scope"];
+    }
   
   if (additionalParameters) {
     for (NSString *key in additionalParameters) {
@@ -157,8 +177,26 @@
     }
   }
   else {
+    NSError *error = nil;
     if (operation.connectionError) {
-      NSLog(@"Connection error: %@", operation.connectionError);
+        error = operation.connectionError;
+    } else {
+        error = [NSError errorWithDomain:@"co.lukeredpath.lroauth2client"
+                                    code:response.statusCode
+                                userInfo:nil];
+    }
+    
+    // auth failure
+    if (accessToken == nil) {
+        if ([self.delegate respondsToSelector:@selector(oauthClient:accessTokenDidReceiveError:)]) {
+            [self.delegate oauthClient:self accessTokenDidReceiveError:error];
+        }
+      
+    // refresh failure
+    } else {
+        if ([self.delegate respondsToSelector:@selector(oauthClient:refreshTokenDidReceiveError:)]) {
+            [self.delegate oauthClient:self refreshTokenDidReceiveError:error];
+        }
     }
   }
 }
@@ -167,19 +205,16 @@
 
 @implementation LROAuth2Client (UIWebViewIntegration)
 
-- (void)authorizeUsingWebView:(UIWebView *)webView;
-{
+- (void)authorizeUsingWebView:(UIWebView *)webView {
   [self authorizeUsingWebView:webView additionalParameters:nil];
 }
 
-- (void)authorizeUsingWebView:(UIWebView *)webView additionalParameters:(NSDictionary *)additionalParameters;
-{
+- (void)authorizeUsingWebView:(UIWebView *)webView additionalParameters:(NSDictionary *)additionalParameters {
   [webView setDelegate:self];
   [webView loadRequest:[self userAuthorizationRequestWithParameters:additionalParameters]];
 }
 
-- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType;
-{  
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
   if ([[request.URL absoluteString] hasPrefix:[self.redirectURL absoluteString]]) {
     [self extractAccessCodeFromCallbackURL:request.URL];
 
