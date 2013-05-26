@@ -18,6 +18,8 @@
 
 @optional
 - (void)oauthClientDidReceiveAccessCode:(LROAuth2Client *)client;
+- (void)oauthClient:(LROAuth2Client*)client accessTokenDidReceiveError:(NSError*)error;
+- (void)oauthClient:(LROAuth2Client*)client refreshTokenDidReceiveError:(NSError*)error;
 - (void)oauthClientDidCancel:(LROAuth2Client *)client;
 
 @end
