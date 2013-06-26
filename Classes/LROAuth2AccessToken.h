@@ -10,9 +10,9 @@
 
 
 @interface LROAuth2AccessToken : UIView <NSCoding> {
-  NSDictionary *authResponseData;
-  NSDate *expiresAt;
+    NSDate *expiresAt;
 }
+@property (nonatomic, readonly) NSDictionary *authResponseData;
 @property (unsafe_unretained, nonatomic, readonly) NSString *accessToken;
 @property (unsafe_unretained, nonatomic, readonly) NSString *refreshToken;
 @property (nonatomic, readonly) NSDate *expiresAt;

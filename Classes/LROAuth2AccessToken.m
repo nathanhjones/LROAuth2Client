@@ -9,7 +9,7 @@
 #import "LROAuth2AccessToken.h"
 
 @interface LROAuth2AccessToken ()
-@property (nonatomic, copy) NSDictionary *authResponseData;
+@property(nonatomic,readwrite) NSDictionary *authResponseData;
 - (void)extractExpiresAtFromResponse;
 @end
 
@@ -24,7 +24,7 @@
 
 - (id)initWithAuthorizationResponse:(NSDictionary *)data {
     if (self = [super init]) {
-        authResponseData = [data copy];
+        self.authResponseData = [data copy];
         [self extractExpiresAtFromResponse];
     }
     return self;
@@ -45,7 +45,7 @@
     [tokenData setObject:[data valueForKey:@"access_token"] forKey:@"access_token"];
     [tokenData setObject:[data objectForKey:@"expires_in"]  forKey:@"expires_in"];
   
-    [self setAuthResponseData:tokenData];
+    self.authResponseData = tokenData;
     [self extractExpiresAtFromResponse];
 }
 
@@ -57,11 +57,11 @@
 #pragma mark -  Dynamic accessors
 
 - (NSString *)accessToken {
-    return [authResponseData objectForKey:@"access_token"];
+    return [self.authResponseData objectForKey:@"token"];
 }
 
 - (NSString *)refreshToken {
-    return [authResponseData objectForKey:@"refresh_token"];
+    return [self.authResponseData objectForKey:@"refresh_token"];
 }
 
 #pragma mark -  NSCoding
